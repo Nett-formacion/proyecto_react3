@@ -10,7 +10,8 @@ export default function NavLayout() {
             {/*@auth*/}
             <Link href={route("proyectos.index")} className="btn  btn-active">Proyectos</Link>
             {/*@endauth*/}
-            <a className="btn  btn-accent" href="">Alumnos</a>
+            <Link className="btn  btn-accent" href={route('alumnos.index')} >Alumnos</Link>
+            <Link className="btn  btn-accent" href={route('DatosApi')} >Datos de API</Link>
             <a className="btn  btn-warning" href="">Contacta</a>
         </nav>
     );

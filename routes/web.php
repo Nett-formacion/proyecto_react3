@@ -4,11 +4,16 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ApiDataController;
 
 Route::get("/", function(){
     return Inertia::render("Index");
 
 });
+Route::get("OpcionesDatosApi", [ApiDataController::class,'index'])->name("DatosApi");
+Route::get("GetImages", [ApiDataController::class,'get_imagenes'])->name("GetImages");
+Route::get("usersGit", \App\Http\Controllers\GitController::class)->name("git_users");
+Route::resource("alumnos", \App\Http\Controllers\AlumnoController::class);
 Route::resource("proyectos", \App\Http\Controllers\ProyectoController::class);
 //Route::get('/', function () {
 //    return Inertia::render('Welcome', [

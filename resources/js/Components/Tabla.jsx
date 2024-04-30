@@ -2,6 +2,7 @@ import {route} from "ziggy-js";
 import {router} from "@inertiajs/react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import {useState} from "react";
 
 export default function Tabla({nombre, campos, filas}) {
     // console.log(`nombre de tabla ${nombre}`);
@@ -41,6 +42,44 @@ export default function Tabla({nombre, campos, filas}) {
 
     }
 
+    const [orden, setOrden] = useState({
+        campo: campos[0],
+        ascendente: true
+    })
+
+    function ordenar(campo) {
+        setOrden((ordenActual)=>{
+                if (ordenActual.campo ==campo)
+                    return{
+                        campo,
+                        ascendente:!ordenActual.ascendente
+                    }
+                else
+                    return{
+                        campo,
+                        ascendente: true
+                    }
+
+            }
+        )
+    }
+    const filasOrdenadas=[...filas].sort((a,b)=>{
+        let valorA = a[orden.campo]
+        let valorB = b[orden.campo]
+        if (!isNaN(valorA)){
+            valorA=Number(valorA)
+            valorB=Number(valorB)
+        }
+
+        if (valorA<valorB)
+            return orden.ascendente? -1:1;
+        if (valorA>valorB)
+            return orden.ascendente? 1:-1;
+        return 0
+
+    })
+
+
 
     return (
         <>
@@ -57,14 +96,20 @@ export default function Tabla({nombre, campos, filas}) {
                         <thead>
                         <tr>
                             {campos.map((campo, index) => (
-                                <td key={index}>{campo}</td>
-                            ))}
+                                <th key={index}>
+                                    <button className="btn btn-sm btn-primary" onClick={() => ordenar(campo)}>
+                                        {campo}
+                                        {orden.campo===campo &&(
+                                            orden.ascendente? ' ▲': ' ▼')}
+                                    </button>
+                                </th>
+                                ))}
                             <td></td>
                             <td></td>
                         </tr>
                         </thead>
                         <tbody>
-                        {filas.map((fila) => (
+                        {filasOrdenadas.map((fila) => (
                             <tr key={fila.id}>
                                 {campos.map((campo, indexCampo) => (
                                     <th key={indexCampo}>{fila[campo]}</th>
