@@ -112,9 +112,19 @@ export default function Tabla({nombre, campos, filas}) {
                         {filasOrdenadas.map((fila) => (
                             <tr key={fila.id}>
                                 {campos.map((campo, indexCampo) => (
-                                    <th key={indexCampo}>{fila[campo]}</th>
+                                    <td key={indexCampo}>
+                                        {campo === 'avatar' ? (
+                                            <div className="avatar">
+                                                <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                                    <img src={fila[campo]} alt="Avatar" />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            fila[campo]
+                                        )}
+                                    </td>
                                 ))}
-                                {/*Editar*/}
+                                    {/*Editar*/}
                                 <td>
                                     <button onClick={() => handleEdit(fila.id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
