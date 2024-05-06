@@ -12,7 +12,7 @@ Route::get("/", function(){
 });
 Route::get("OpcionesDatosApi", [ApiDataController::class,'index'])->name("DatosApi");
 Route::get("GetImages", [ApiDataController::class,'get_imagenes'])->name("GetImages");
-Route::get("GetFilms", [ApiDataController::class,'get_films'])->name("GetFilms");
+Route::get("films", [ApiDataController::class,'get_films'])->name("films");
 Route::get("usersGit", \App\Http\Controllers\GitController::class)->name("git_users");
 Route::resource("alumnos", \App\Http\Controllers\AlumnoController::class);
 Route::resource("proyectos", \App\Http\Controllers\ProyectoController::class);

@@ -1,176 +1,235 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Layout from "@/Layouts/Layout.jsx";
 import axios from "axios";
 import Tabla from "@/Components/Tabla.jsx";
 
-export default function Index({lenguajes=[], imagesServer = [], filmsServer = [] }) {
+
+export default function Opciones({langs = []}
+) {
 
 
-    //Confirmamos datos
-    console.log("Opciones.jsx" );
-    console.log(lenguajes);
+  //Confirmamos datos
+  console.log("Opciones.jsx");
+  console.log(langs);
+  const [visible, setVisible] = useState(true);
+  const [langSelected, setLangSelected] = useState("");
 
-    const [lenguajeSeleccionado, setLenguajeSeleccionado]=useState([lenguajes[0]||""]);
-    const [usuariosLenguajes, setUsuariosLenguajes]=useState([])
-    const [usuarios, setUsuarios] = useState([]);
-    const [imagenes, setImages] = useState([]);
-    const [visible, setVisible] = useState(true);
-    const [films, setFilms] = useState([]);
+  const [images, setImages]=useState([])
 
 
+  //valores para la tabla
+  const [fields, setFields] = useState([]);
+  const [rows, setRows] = useState([]);
+  const [name, setName] = useState("");
+  const [crud, setCrud] = useState(false);
 
-    useEffect(() => {
-        if (imagesServer.length > 0) {
-            setImages(imagesServer);
-            setVisible(false);
-        }
-        if (filmsServer.length > 0) {
-            setFilms(filmsServer); // Aquí había un error, debe ser filmsServer no imagesFilms
-            setVisible(false);
-        }
-    }, [imagesServer, filmsServer]);
-    const handleChangeLanguaje =(e)=>setLenguajeSeleccionado(e.target.value);
-    const handleClose=()=>
-        setVisible(true)
-    const getUserLang=()=>{
-        console.log ("Opciones lenguaje seleccionado" + lenguajeSeleccionado);
-        const url =`https://api.github.com/search/users?q=language:${lenguajeSeleccionado}`
-        axios.get(url)
-            .then((response)=>{
-                console.log("Obtenido users de lenguajes");
-                console.log(response.data);
-                setVisible(false);
-                setUsuariosLenguajes(response.data.items)
-            })
-            .catch((error)=> {
-                    console.error("Error obteniendo usuarios de un lenguaje en git");
-                    console.error(error);
-                }
-            ) ;
+  const handleLangSelected = (e) => (
+    setLangSelected(e.target.value)
+  );
+  const handleClose=()=>{
 
+    setVisible(true);
+    setRows([]);
+    setFields([]);
+    setName("")
+
+  }
+  const getUserGitLang = () => {
+    console.log(langSelected);
+    axios.get(`https://api.github.com/search/users?q=language:${langSelected}`)
+        .then  ((response) => {
+          setVisible(false)
+          setFields(["avatar", "login", "url"]);
+          setRows(response.data.items.map((data) =>({
+              avatar: data.avatar_url,
+              login: data.login,
+              url: data.url,
+            }
+        )));
+          setCrud(false)
+          setName(`Usuarios Git con repos de ${langSelected}`)
+          //Verificadmos valores
+          console.log("filas :");
+          console.log(rows);
+        })
+        .catch = ((error) => {
+        console.error("Error en getUserGitLang")
+        console.error(error)
+      })
     }
-    const getFilms = () => {
-        setVisible(false);
-        axios.get("http://127.0.0.1:8000/GetFilms")
-            .then(response => {
-                console.log(response.data);
-                setFilms(response.data);
-            })
-            .catch(error => console.error("Error en getFilms " + error));
-    };
-
+  const getGitUsers = () => {
+    //Vamos a obtener usuarios de Zaragoza
+    console.log(langSelected);
+    axios.get(`https://api.github.com/search/users?q=location:Zaragoza`)
+        .then  ((response) => {
+          setVisible(false)
+          setFields(["avatar", "login", "url"]);
+          setRows(response.data.items.map((data) =>({
+              avatar: data.avatar_url,
+              login: data.login,
+              url: data.url,
+            }
+        )));
+          setCrud(false)
+          setName(`Usuarios Git de Zaragoza`)
+          //Verificadmos valores
+          console.log("filas :");
+          console.log(rows);
+        })
+        .catch = ((error) => {
+        console.error("Error en getUserGit")
+        console.error(error)
+      })
+    }
     const getImages = () => {
-        setVisible(false);
-        axios.get("http://localhost:8000/GetImages")
-            .then(response => {
-                console.log(response);
-                setImages(response.data);
-            })
-            .catch(error => console.error('Error fetching images:', error));
-    };
+    //Vamos a obtener usuarios de Zaragoza
 
-    const getUsuariosGit = async () => {
-        setVisible(false);
-        try {
-            const response = await axios.get("https://api.github.com/search/users?q=location:Zaragoza");
-            console.log(response.data);
-            setUsuarios(response.data.items);
-        } catch (error) {
-            console.error("Error en la consulta: ", error);
-        }
-    };
+    const secret = "EMi4yUpe5MzEVryUwiwUA4JHiX46lByLXuMvQD1ONA8";
+    const url_base = `https://api.unsplash.com/photos/random?client_id=${secret}&count=10`;
+    axios.get(url_base)
+        .then  ((response) => {
+          setVisible(false)
+          setFields(["avatar", "url"]);
+          setRows(response.data.map((data) =>({
+              avatar: data.urls.regular,
+              url:  data.links.download,
+            }
+          )));
+          setCrud(false)
+          setName(`10 Imágenes aleatorias`)
+          console.log(images);
+        })
+        .catch = ((error) => {
+        console.error("Error en getImages")
+        console.error(error)
+      })
+    }
+  const getFilms = () => {
+    //Vamos a obtener usuarios de Zaragoza
 
-    return (
-        <Layout>
-            {visible && (
-                <div className="flex justify-center items-center h-full">
-                        <div className="grid grid-cols-2 gap-4 ">
-                            <div className="card w-96 bg-base-100 shadow-xl image-full">
-                                <figure className="filter brightness-200"><img src="images/GIT_Repository.jpg"
-                                                                               alt="Users Git"/>
-                                </figure>
-                                <div className="card-body">
-                                    <h2 className="mt-7 card-title">Git access</h2>
-                                    <p>Repos de lenguajes</p>
-                                    <div className="card-actions justify-end">
-                                            {lenguajes.length>0 &&(
-                                                <select name="lenguaje" id="" onChange={handleChangeLanguaje}>
-                                                    {lenguajes.map((lenguaje, index)=> (
-                                                    <option key={index} value={lenguaje}>{lenguaje}</option>
-                                                ))}
-                                                </select>
-                                            )}
+    const secret = "0104ce154d195cabb2535d5811bb8c90";
+    const url = `https://api.themoviedb.org/3/trending/all/day?language=es-ES&api_key=${secret}`;
+        axios.get(url)
+      .then  ((response) => {
+        setVisible(false)
+        setFields(["title", "url"]);
+        setRows(response.data.results.map((data) =>({
+            title: data.title,
+            url:`https://www.themoviedb.org/movie/${data.id}`
+          }
+        )));
+        setCrud(false)
+        setName(`Películas aleatorias`)
+        console.log(images);
+      })
+      .catch = ((error) => {
+      console.error("Error en getImages")
+      console.error(error)
+    })
+  }
 
-                                        <button onClick={getUserLang} className="btn btn-primary">Obtener datos</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card w-96 bg-base-100 shadow-xl image-full">
-                                <figure className="filter brightness-200">
-                                    <img src="images/PELICULAS_the_movil_db.png" alt="films the movil db"/></figure>
-                                <div className="card-body">
-                                    <h2 className="card-title">Películas </h2>
-                                    <p>Películas The Movil DB</p>
-                                    <div className="card-actions justify-end">
-                                        <button onClick={getFilms} className="btn btn-primary">Obtener datos</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card w-96 bg-base-100 shadow-xl image-full">
+  const getFilmsServer=()=>{
+    axios.get("http://127.0.0.1:8000/films")
+      .then  ((response) => {
+        setVisible(false)
+        setFields(["title", "url"]);
+        setRows(response.data.results.map((data) =>({
+            title: data.title,
+            url:`https://www.themoviedb.org/movie/${data.id}`
+          }
+        )));
+        setCrud(false)
+        setName(`Películas aleatorias`)
+        console.log(images);
+      })
+      .catch = ((error) => {
+      console.error("Error en getImages")
+      console.error(error)
+    })
+  }
 
 
-                                <figure>
-                                    <img src="images/GIT_Users.jpeg" alt="Users Git"/>
-                                </figure>
-                                <div className="card-body">
-                                    <h2 className="card-title">Git access</h2>
-                                    <p>Usuarios de git</p>
-                                    <div className="card-actions justify-end">
-                                        <button onClick={getUsuariosGit} className="btn btn-primary">Obtener datos
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="card w-96 bg-base-100 shadow-xl image-full">
-                                <figure>
-                                    <img src="images/IMAGES_Unsplash.jpeg" alt="Users Git"/>
-                                </figure>
-                                <div className="card-body">
-                                    <h2 className="card-title">Imágenes de unsplash</h2>
-                                    <p>Imágenes</p>
-                                    <div className="card-actions justify-end">
-                                        <button onClick={getImages} className="btn btn-primary">Obtener imágenes
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+
+
+
+  return (
+    <Layout>
+      {visible && (
+        <div className="flex justify-center items-center h-full">
+          <div className="grid grid-cols-2 gap-4 ">
+            <div className="card w-96 bg-base-100 shadow-xl image-full">
+              <figure>
+                <img src="images/GIT_Users.jpeg" alt="Users Git"/>
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">Repositorios Git</h2>
+                <p>Lenguajes de programación</p>
+                <div className="card-actions justify-end">
+                  {langs.length > 0 && (
+                    <select onChange={handleLangSelected} value={langSelected} className="text-blue-700">
+                      {langs.map((lang, index) => (
+                          <option key={index}>{lang}</option>
+                        )
+                      )}
+                    </select>
+                  )}
+
+                  <button onClick={getUserGitLang} className="btn btn-primary">Obtener datos
+                  </button>
                 </div>
-            )}
-            {usuarios.length > 0 && (
-                <div onClick={handleClose} className="flex flex-col justify-center items-center h-full">
-                    <button className="btn btn-primary">Cerrar</button>
-                    <Tabla nombre="Usuarios" campos={['login', 'url']}
-                           filas={usuarios.map(user => ({
-                               id: user.id,
-                               login: user.login,
-                               url: user.html_url
-                           }))}/>
+              </div>
+            </div>
+            <div className="card w-96 bg-base-100 shadow-xl image-full">
+
+              <figure>
+                <img src="images/GIT_Users.jpeg" alt="Users Git"/>
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">Git access</h2>
+                <p>Usuarios de git</p>
+                <div className="card-actions justify-end">
+                  <button onClick={getGitUsers} className="btn btn-primary">Obtener datos
+                  </button>
                 </div>
-            )}
-            {usuariosLenguajes.length>0 && (
-                <div onClick={handleClose} className="flex flex-col justify-center items-center h-full">
-                    <button className="btn btn-primary">Cerrar</button>
-                    <Tabla nombre={`Usuarios con repos de ${lenguajeSeleccionado}`}
-                           campos={['avatar','login', 'url']}
-                           filas={usuariosLenguajes.map((user => ({
-                               id: user.id,
-                               avatar: user.avatar_url,
-                               login: user.login,
-                               url: user.html_url
-                           })))}/>
+              </div>
+            </div>
+            <div className="card w-96 bg-base-100 shadow-xl image-full">
+              <figure className="filter brightness-200">
+                <img src="images/PELICULAS_the_movil_db.png" alt="films the movil db"/></figure>
+              <div className="card-body">
+                <h2 className="card-title">Películas </h2>
+                <p>Películas The Movil DB</p>
+                <div className="card-actions justify-end">
+                  <button onClick={getFilmsServer} className="btn btn-primary">Obtener datos</button>
                 </div>
-            )}
-        </Layout>
-    );
+              </div>
+            </div>
+            <div className="card w-96 bg-base-100 shadow-xl image-full">
+              <figure>
+                <img src="images/IMAGES_Unsplash.jpeg" alt="Users Git"/>
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">Imágenes de unsplash</h2>
+                <p>Imágenes</p>
+                <div className="card-actions justify-end">
+                  <button onClick={getImages} className="btn btn-primary">Obtener imágenes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!visible  &&(
+          <div onClick={handleClose} className="flex flex-col justify-center items-center h-full">
+            <button className="btn btn-primary">Cerrar</button>
+              <Tabla nombre={name} campos={fields} filas={rows} crud={false}/>
+          </div>
+
+      )}
+
+    </Layout>
+  );
 }

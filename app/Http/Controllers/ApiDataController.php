@@ -13,8 +13,8 @@ class ApiDataController extends Controller
 
     public function index()
     {
-        $lenguajes = config("lenguajes_programacion");
-        return Inertia::render('Api/Opciones', ['lenguajes' => $lenguajes]);
+        $langs = config("lenguajes_programacion");
+        return Inertia::render('Api/Opciones', compact("langs"));
     }
 
     public function get_imagenes()
@@ -65,8 +65,6 @@ class ApiDataController extends Controller
     public function get_films()
     {
         info ("ApiDataController En get_films");
-
-
 
         $client = new Client();
         $api_key = "0104ce154d195cabb2535d5811bb8c90";

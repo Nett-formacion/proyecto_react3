@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/proyecto_react3.iml" filepath="$PROJECT_DIR$/.idea/proyecto_react3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../proyecto_react3/.idea/proyecto_react3.iml" filepath="$PROJECT_DIR$/../proyecto_react3/.idea/proyecto_react3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/proyecto_react4.iml" filepath="$PROJECT_DIR$/.idea/proyecto_react4.iml" />
     </modules>
   </component>
 </project>

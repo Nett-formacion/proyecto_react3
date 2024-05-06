@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import {useState} from "react";
 
-export default function Tabla({nombre, campos, filas}) {
+export default function Tabla({nombre, campos, filas, crud=true}) {
     // console.log(`nombre de tabla ${nombre}`);
     // console.log(`Campos  ${campos}`);
     // console.log(`Filas  ${filas}`);
@@ -47,7 +47,8 @@ export default function Tabla({nombre, campos, filas}) {
         ascendente: true
     })
 
-    function ordenar(campo) {
+    function ordenar(e,campo) {
+        e.stopPropagation();
         setOrden((ordenActual)=>{
                 if (ordenActual.campo ==campo)
                     return{
@@ -89,7 +90,7 @@ export default function Tabla({nombre, campos, filas}) {
                 <div className="flex flex-row">
 
                     <h1 className="text-4xl text-green-700 ,t-4"> Listado de {nombre}</h1>
-                    <button onClick={handlenuevaFila} className="btn btn-sm btn-primary m-2">Nuevo {nombre}</button>
+                    {crud&& (<button onClick={handlenuevaFila} className="btn btn-sm btn-primary m-2">Nuevo {nombre}</button>)}
                 </div>
                 <div className="overflow-x-auto h-full">
                     <table className="table table-auto table-xs table-pin-rows table-pin-cols">
@@ -97,7 +98,7 @@ export default function Tabla({nombre, campos, filas}) {
                         <tr>
                             {campos.map((campo, index) => (
                                 <th key={index}>
-                                    <button className="btn btn-sm btn-primary" onClick={() => ordenar(campo)}>
+                                    <button className="btn btn-sm btn-primary" onClick={(e) => ordenar(e,campo)}>
                                         {campo}
                                         {orden.campo===campo &&(
                                             orden.ascendente? ' ▲': ' ▼')}
@@ -114,17 +115,26 @@ export default function Tabla({nombre, campos, filas}) {
                                 {campos.map((campo, indexCampo) => (
                                     <td key={indexCampo}>
                                         {campo === 'avatar' ? (
-                                            <div className="avatar">
-                                                <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                                    <img src={fila[campo]} alt="Avatar" />
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            fila[campo]
-                                        )}
+                                          <div className="avatar">
+                                              <div className="avatar">
+                                                  <div className="w-10 rounded-full">
+                                                      <img src={fila[campo]} alt="Avatar"/>
+                                                  </div>
+                                              </div>
+
+                                          </div>
+                                        ) :(campo=="url" ? (
+                                          <a href={fila[campo]} target="_blank"
+                                             rel="noopener noreferrer">{fila[campo]}</a>
+
+                                        ):(
+                                          fila[campo]
+                                        ))}
                                     </td>
                                 ))}
                                     {/*Editar*/}
+                                {crud &&(
+                                    <>
                                 <td>
                                     <button onClick={() => handleEdit(fila.id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -137,6 +147,7 @@ export default function Tabla({nombre, campos, filas}) {
 
                                 </td>
                                 {/*Borrar*/}
+
                                 <td>
                                     <button onClick={() => handleDelete(fila.id)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -147,6 +158,9 @@ export default function Tabla({nombre, campos, filas}) {
                                         </svg>
                                     </button>
                                 </td>
+                                    </>
+                                )}
+
                             </tr>
                         ))}
                         </tbody>

@@ -1,5 +1,5 @@
 <?php
-return ["PHP", "Python","Laravel",
-        "React","JavaScript","Angular",
-        "Mysql",
-        "Css", "Blade", "Tailwind", "Bootstrap"];
+return ["PHP", "Python","Go",
+        "Java","JavaScript","TypeScript",
+        "Ruby",
+        "Rust","C#"];
